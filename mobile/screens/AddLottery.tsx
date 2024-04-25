@@ -3,11 +3,12 @@ import { View, StyleSheet } from 'react-native';
 import { useToast } from 'react-native-toast-notifications';
 import { useNavigation } from '@react-navigation/native';
 import Form from '../components/Form';
-import { AddLotteryNavigationProp } from '../types';
 import { colors } from '../colors';
+import { LotteriesNavigatorNavigationProp } from '../navigation/types';
 
 const AddLottery = () => {
-  const navigation = useNavigation<AddLotteryNavigationProp>();
+  const navigation =
+    useNavigation<LotteriesNavigatorNavigationProp<'AddLottery'>>();
   const toast = useToast();
 
   const onSubmit = () => {

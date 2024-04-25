@@ -10,12 +10,15 @@ import {
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Lottery, LotteryDetailsNavigationProp } from '../types';
+import { useNavigation } from '@react-navigation/native';
+import { Lottery } from '../types';
 import { colors } from '../colors';
+import {
+  LotteryListSortingOptions,
+  useLotteriesSortingContext,
+} from '../context/lotteries-sorting-context';
+import { LotteriesNavigatorNavigationProp } from '../navigation/types';
 import SearchInput from './SearchInput';
-import { LotteryDetails } from '../screens/LotteryDetails';
-import {useNavigation} from '@react-navigation/native'
-import { LotteryListSortingOptions, useLotteriesSortingContext } from '../context/lotteries-sorting-context';
 
 type Props = {
   lotteries: Lottery[];
@@ -37,15 +40,15 @@ const LotteryList = ({
   const { width } = useWindowDimensions();
   const scrollY = useRef(new Animated.Value(0)).current;
 
-  const navigation = useNavigation<LotteryDetailsNavigationProp>();//<-- added in part 1
+  const navigation = useNavigation<LotteriesNavigatorNavigationProp<'Home'>>();
+
+  const { selectedSorting } = useLotteriesSortingContext();
 
   const headerHeight = scrollY.interpolate({
     inputRange: [0, 200],
     outputRange: [200, 60],
     extrapolate: 'clamp',
   });
-
-  const { selectedSorting } = useLotteriesSortingContext();
 
   const opacity = scrollY.interpolate({
     inputRange: [0, 100],
@@ -61,15 +64,15 @@ const LotteryList = ({
 
   const filteredLotteries = useMemo(
     () =>
-        lotteries
-            ?.filter((lottery) => lottery.name.includes(filter))
-            .sort((a, b) =>
-            selectedSorting === LotteryListSortingOptions.Ascending
-                ? Number(a.prize) - Number(b.prize)
-                : Number(b.prize) - Number(a.prize),
-            ),
-[filter, lotteries, selectedSorting],
-);
+      lotteries
+        ?.filter((lottery) => lottery.name.includes(filter))
+        .sort((a, b) =>
+          selectedSorting === LotteryListSortingOptions.Ascending
+            ? Number(a.prize) - Number(b.prize)
+            : Number(b.prize) - Number(a.prize),
+        ),
+    [filter, lotteries, selectedSorting],
+  );
 
   const renderItem = ({ item }: { item: Lottery }) => {
     const isDisabled = item.status === 'finished';
@@ -98,8 +101,9 @@ const LotteryList = ({
           )}
         </View>
         <TouchableOpacity
-        accessibilityRole='button'
-        onPress={()=>navigation.navigate('LotteryDetails',{id:item.id})}>
+          accessibilityRole="button"
+          onPress={() => navigation.navigate('LotteryDetails', { id: item.id })}
+        >
           <Text style={styles.name}>{item.name}</Text>
         </TouchableOpacity>
         <Text style={styles.prize}>{item.prize}</Text>

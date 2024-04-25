@@ -2,12 +2,12 @@ import React from 'react';
 import { StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
-import { AddLotteryNavigationProp } from '../types';
 import { colors } from '../colors';
 import {
   LotteryListSortingOptions,
   useLotteriesSortingContext,
 } from '../context/lotteries-sorting-context';
+import { LotteriesNavigatorNavigationProp } from '../navigation/types';
 
 const LotteriesSortingButton = () => {
   const { selectedSorting, switchSorting } = useLotteriesSortingContext();
@@ -34,7 +34,7 @@ interface HomeHeaderProps {
 }
 
 export const HomeHeader = ({ selectedLotteries }: HomeHeaderProps) => {
-  const navigation = useNavigation<AddLotteryNavigationProp>();
+  const navigation = useNavigation<LotteriesNavigatorNavigationProp<'Home'>>();
 
   const backgroundColor =
     selectedLotteries.length === 0 ? colors.grey : colors.secondary;

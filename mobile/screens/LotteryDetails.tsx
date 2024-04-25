@@ -1,12 +1,13 @@
-import React, { ReactElement,useEffect } from 'react';
+import React, { ReactElement } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useRoute } from '@react-navigation/native';
-import { Lottery, LotteryDetailsRouteProp } from '../types';
+import { Lottery } from '../types';
 import { useLotteryDetails } from '../hooks/useLotteryDetails';
 import Loader from '../components/Loader';
 import { colors } from '../colors';
-import { LotteryDetailsError } from './LotteryDetailsError';
 import { ErrorBoundary } from '../components/ErrorBoundary';
+import { LotteriesNavigatorRouteProp } from '../navigation/types';
+import { LotteryDetailsError } from './LotteryDetailsError';
 
 /* ----- DATA PROVIDER ----- */
 
@@ -20,9 +21,6 @@ const LotteryDetailsDataProvider = ({
   lotteryId,
 }: LotteryDetailsDataProviderProps) => {
   const { data, loading } = useLotteryDetails(lotteryId);
-//   useEffect(() => {
-//     throw new Error(); <-- Testing step 4 i.e Test the error Boundary Component
-//  });
 
   if (loading) return <Loader />;
   return data ? children(data) : null;
@@ -64,14 +62,14 @@ const LotteryDetailsView = ({ lottery }: LotteryDetailsViewProps) => {
 const fallback = <LotteryDetailsError />;
 
 export const LotteryDetails = () => {
-  const route = useRoute<LotteryDetailsRouteProp>();
+  const route = useRoute<LotteriesNavigatorRouteProp<'LotteryDetails'>>();
 
   return (
-      <ErrorBoundary fallback={fallback}>
-          <LotteryDetailsDataProvider lotteryId={route.params.id}>
-              {(lotteryDetails) => <LotteryDetailsView lottery={lotteryDetails} />}
-          </LotteryDetailsDataProvider>
-      </ErrorBoundary>
+    <ErrorBoundary fallback={fallback}>
+      <LotteryDetailsDataProvider lotteryId={route.params.id}>
+        {(lotteryDetails) => <LotteryDetailsView lottery={lotteryDetails} />}
+      </LotteryDetailsDataProvider>
+    </ErrorBoundary>
   );
 };
 

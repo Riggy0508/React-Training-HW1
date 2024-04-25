@@ -1,6 +1,11 @@
 import { Reducer } from 'redux';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import {GET_LOTTERIES_ERROR,GET_LOTTERIES_STARTED} from '../actions/lotteryAction';
+import {
+  GET_LOTTERIES_ERROR,
+  GET_LOTTERIES_STARTED,
+  GET_LOTTERIES_SUCCESS,
+  GetLotteriesActions,
+} from '../actions/lotteryAction';
 import { Lottery } from '../../types';
 import * as LotteriesService from '../../services/lottery';
 
@@ -8,12 +13,14 @@ export interface LotteryState {
   data: Lottery[];
   loading: boolean;
   error: Error | null;
+  isAddingNewLotteriesEnabled: boolean;
 }
 
 const initialState: LotteryState = {
   data: [],
   loading: false,
   error: null,
+  isAddingNewLotteriesEnabled: true,
 };
 
 // Define a thunk that dispatches those action creators
@@ -45,6 +52,9 @@ const lotteriesSlice = createSlice({
         state.data = action.payload;
       }
     },
+    toggleAddingNewLotteriesEnabled(state) {
+      state.isAddingNewLotteriesEnabled = !state.isAddingNewLotteriesEnabled;
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -60,5 +70,37 @@ const lotteriesSlice = createSlice({
 });
 
 // Destructure and export the plain action creators
-export const { lotteriesLoading, lotteriesReceived } = lotteriesSlice.actions;
+export const {
+  lotteriesLoading,
+  lotteriesReceived,
+  toggleAddingNewLotteriesEnabled,
+} = lotteriesSlice.actions;
 export default lotteriesSlice;
+
+// NOTE: Previous implementation
+// const lotteryReducer: Reducer<LotteryState, GetLotteriesActions> = (
+//   state = initialState,
+//   action,
+// ) => {
+//   switch (action.type) {
+//     case GET_LOTTERIES_STARTED:
+//       return {
+//         ...state,
+//         loading: true,
+//       };
+//     case GET_LOTTERIES_SUCCESS:
+//       return {
+//         ...state,
+//         loading: false,
+//         data: action.payload,
+//       };
+//     case GET_LOTTERIES_ERROR:
+//       return {
+//         ...state,
+//         loading: false,
+//         error: action.payload,
+//       };
+//     default:
+//       return state;
+//   }
+// };

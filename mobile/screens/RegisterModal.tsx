@@ -12,7 +12,10 @@ import * as Yup from 'yup';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import useLotteryRegister from '../hooks/useLotteryRegister';
 import { colors } from '../colors';
-import { RegisterScreenRouteProp } from '../types';
+import {
+  LotteriesNavigatorNavigationProp,
+  LotteriesNavigatorRouteProp,
+} from '../navigation/types';
 
 const registerSchema = Yup.object({
   name: Yup.string().min(4).required(),
@@ -20,8 +23,9 @@ const registerSchema = Yup.object({
 
 const RegisterModal = () => {
   const { error, loading, registerToLotteries } = useLotteryRegister();
-  const route = useRoute<RegisterScreenRouteProp>();
-  const navigation = useNavigation();
+  const route = useRoute<LotteriesNavigatorRouteProp<'Register'>>();
+  const navigation =
+    useNavigation<LotteriesNavigatorNavigationProp<'Register'>>();
 
   const selectedLotteries = route.params?.selectedLotteries;
 
@@ -37,7 +41,6 @@ const RegisterModal = () => {
       name: '',
     },
     onSubmit: async ({ name }) => {
-      console.log(name,selectedLotteries)
       await registerToLotteries({ name, lotteries: selectedLotteries });
       handleClose();
     },
@@ -59,7 +62,7 @@ const RegisterModal = () => {
         style={styles.input}
       />
       {formik.touched.name && formik.errors.name ? (
-        <Text style={styles.error}>{formik.errors.name}</Text>
+        <Text>{formik.errors.name}</Text>
       ) : null}
       <Pressable
         accessibilityRole="button"
