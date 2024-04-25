@@ -8,6 +8,7 @@ import {
   useLotteriesSortingContext,
 } from '../context/lotteries-sorting-context';
 import { LotteriesNavigatorNavigationProp } from '../navigation/types';
+import { CustomButton } from '../native';
 
 const LotteriesSortingButton = () => {
   const { selectedSorting, switchSorting } = useLotteriesSortingContext();
@@ -36,20 +37,15 @@ interface HomeHeaderProps {
 export const HomeHeader = ({ selectedLotteries }: HomeHeaderProps) => {
   const navigation = useNavigation<LotteriesNavigatorNavigationProp<'Home'>>();
 
-  const backgroundColor =
-    selectedLotteries.length === 0 ? colors.grey : colors.secondary;
-
   return (
     <>
       <LotteriesSortingButton />
-      <TouchableOpacity
-        accessibilityRole="button"
+      <CustomButton
         onPress={() => navigation.navigate('Register', { selectedLotteries })}
-        style={[styles.button, { backgroundColor }]}
+        style={styles.button}
         disabled={selectedLotteries.length === 0}
-      >
-        <Text style={styles.text}>Register</Text>
-      </TouchableOpacity>
+        title="Register"
+      />
     </>
   );
 };
@@ -57,6 +53,8 @@ export const HomeHeader = ({ selectedLotteries }: HomeHeaderProps) => {
 const styles = StyleSheet.create({
   button: {
     position: 'absolute',
+    width: 100,
+    height: 40,
     right: 16,
     top: 8,
     borderRadius: 4,
@@ -64,9 +62,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingVertical: 4,
-  },
-  text: {
-    color: colors.buttonSecondary,
   },
   sortingButton: {
     position: 'absolute',

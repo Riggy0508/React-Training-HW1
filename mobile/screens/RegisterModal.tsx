@@ -16,6 +16,7 @@ import {
   LotteriesNavigatorNavigationProp,
   LotteriesNavigatorRouteProp,
 } from '../navigation/types';
+import { LotteryDetails } from './LotteryDetails';
 
 const registerSchema = Yup.object({
   name: Yup.string().min(4).required(),
@@ -42,6 +43,7 @@ const RegisterModal = () => {
     },
     onSubmit: async ({ name }) => {
       await registerToLotteries({ name, lotteries: selectedLotteries });
+      console.log("1..................Register button clicked",LotteryDetails);
       handleClose();
     },
   });

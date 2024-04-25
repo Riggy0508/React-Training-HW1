@@ -1,18 +1,17 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useToast } from 'react-native-toast-notifications';
 import { useNavigation } from '@react-navigation/native';
 import Form from '../components/Form';
 import { colors } from '../colors';
 import { LotteriesNavigatorNavigationProp } from '../navigation/types';
+import { showFancyNotification } from '../native';
 
 const AddLottery = () => {
   const navigation =
     useNavigation<LotteriesNavigatorNavigationProp<'AddLottery'>>();
-  const toast = useToast();
 
   const onSubmit = () => {
-    toast.show('New lottery added successfully!');
+    showFancyNotification('Lottery added', 'Good luck!');
   };
 
   const onNavigateBack = () => {
