@@ -28,11 +28,9 @@ export default function useLotteryRegister() {
       storeData(lotteries);
       return registerToLottery;
     } catch (e: any) {
-        console.log(1)
       setLoading(false);
       setError(e.message);
       throw e;
-      
     }
   };
 

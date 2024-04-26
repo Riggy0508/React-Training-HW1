@@ -12,6 +12,7 @@ export const DrawerNavigationButton = () => {
     <TouchableOpacity
       accessibilityRole="button"
       onPress={() => navigation.openDrawer()}
+      testID="side_menu_button"
     >
       <MaterialIcons name="menu" size={24} color="black" />
     </TouchableOpacity>

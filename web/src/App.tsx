@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Add } from '@mui/icons-material';
 import { Box, Fab } from '@mui/material';
-import LotteryList from '../components/lotteryList';
-import useLotteries from '../hooks/useLotteries';
-import AddLotteryModal from '../components/addLotteryModel';
-import LotteryNotification from '../components/NewLotteryNotification';// './components/LotteryNotification';
-import RegisterModal from '../components/registrationModal';
+import LotteryList from './components/LotteryList';
+import useLotteries from './hooks/useLotteries';
+import AddLotteryModal from './components/AddLotteryModal';
+import LotteryNotification from './components/LotteryNotification';
+import RegisterModal from './components/RegisterModal';
 
 function App() {
   const [notification, setNotification] = useState({
@@ -42,9 +42,7 @@ function App() {
   return (
     <Box
       sx={{
-        position: 'relative',
-        width: '100vw',
-        height: '100vh',
+        minHeight: '100vh',
       }}
     >
       <LotteryList
@@ -71,7 +69,7 @@ function App() {
       />
       <Box
         sx={{
-          position: 'absolute',
+          position: 'fixed',
           bottom: 32,
           right: 32,
         }}

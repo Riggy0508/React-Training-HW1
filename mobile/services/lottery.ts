@@ -1,8 +1,9 @@
 import { Platform } from 'react-native';
-//import { API_URL_IOS, API_URL_ANDROID } from '@env';
+// eslint-disable-next-line import/no-unresolved
+import { API_URL_IOS, API_URL_ANDROID } from '@env';
 import { Lottery } from '../types';
 
-//const API_URL = Platform.OS === 'ios' ? API_URL_IOS : API_URL_ANDROID;
+const API_URL = Platform.OS === 'ios' ? API_URL_IOS : API_URL_ANDROID;
 
 export async function createNewLottery({
   name,
@@ -47,9 +48,11 @@ export async function getLottieries() {
     throw e;
   }
 }
+
 export async function getLotteryById(lotteryId: string) {
   try {
     const response = await fetch(`http://10.0.2.2:3000/lottery/${lotteryId}`);
+
 
     const body: Awaited<Lottery> = await response.json();
 

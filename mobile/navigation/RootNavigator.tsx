@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { About } from '../screens/About';
 import { LotteriesDrawerNavigator } from './LotteriesDrawerNavigator';
-import {RootNavigatorParamList} from './types';
+import { RootNavigatorParamList } from './types';
 
 const Tab = createBottomTabNavigator<RootNavigatorParamList>();
 

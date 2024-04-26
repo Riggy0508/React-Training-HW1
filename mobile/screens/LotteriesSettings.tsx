@@ -21,6 +21,7 @@ export const LotteriesSettings = () => {
         <Switch
           value={isAddingNewLotteriesEnabled}
           onValueChange={onIsAddingNewLotteriesEnabledValueChange}
+          testID="adding_new_lottery_switch"
         />
         <Text style={styles.settingRowText}>Enable adding new lotteries</Text>
       </View>

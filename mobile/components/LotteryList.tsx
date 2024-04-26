@@ -82,6 +82,7 @@ const LotteryList = ({
     return (
       <Pressable
         accessibilityRole="button"
+        testID='lottery-item'
         style={[
           styles.container,
           {
@@ -91,6 +92,7 @@ const LotteryList = ({
         ]}
         onPress={() => onPress(item.id)}
         disabled={isDisabled || registered}
+        accessible={false}
       >
         <View style={styles.iconsContainer}>
           {item.status === 'running' && (
@@ -103,6 +105,7 @@ const LotteryList = ({
         <TouchableOpacity
           accessibilityRole="button"
           onPress={() => navigation.navigate('LotteryDetails', { id: item.id })}
+          accessible={true}
         >
           <Text style={styles.name}>{item.name}</Text>
         </TouchableOpacity>
