@@ -6,6 +6,8 @@ import { Provider } from 'react-redux';
 import * as ExpoLinking from 'expo-linking';
 import store from './store';
 import { RootNavigator } from './navigation/RootNavigator';
+import {ThemeProvider} from './context/theming-context'
+import {useTheme} from './hooks/useTheme'
 
 const prefix = ExpoLinking.createURL('/');
 
@@ -32,14 +34,23 @@ const linking = {
   },
 };
 
-export default function App() {
+const AppWithTheme=()=>{
+  const {theme} =useTheme();
   return (
     <Provider store={store}>
       <ToastProvider>
-        <NavigationContainer linking={linking}>
+        <NavigationContainer theme={theme} linking={linking}>
           <RootNavigator />
         </NavigationContainer>
       </ToastProvider>
     </Provider>
   );
+}
+
+export default function App(){
+  return (
+    <ThemeProvider>
+      <AppWithTheme/>
+    </ThemeProvider>
+  )
 }
