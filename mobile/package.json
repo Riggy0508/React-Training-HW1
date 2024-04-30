@@ -9,7 +9,8 @@
     "tsc": "tsc",
     "lint": "eslint .",
     "test": "jest",
-    "test:e2e": "maestro test e2e/"
+    "test:e2e": "maestro test e2e/",
+    "test:perf": "reassure"
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
@@ -44,6 +45,7 @@
     "react-native-screens": "~3.20.0",
     "react-native-toast-notifications": "^3.3.1",
     "react-redux": "^8.1.2",
+    "reassure": "^0.11.0",
     "redux": "^4.2.1",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.2",
@@ -63,6 +65,9 @@
   },
   "private": true,
   "jest": {
-    "preset": "jest-expo"
+    "preset": "jest-expo",
+    "setupFiles": [
+      "./__mocks__/jest-setup.js"
+    ]
   }
 }

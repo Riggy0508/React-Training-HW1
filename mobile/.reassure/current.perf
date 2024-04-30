@@ -1,0 +1,3 @@
+{"metadata":{"creationDate":"2024-04-30T00:42:28.764Z","branch":"HW-10","commitHash":"ee4af11529a734dffdef068507d150af673d715f"}}
+{"name":"Home Performance Test","type":"render","runs":10,"meanDuration":0,"stdevDuration":0,"durations":[0,0,0,0,0,0,0,0,0,0],"meanCount":2,"stdevCount":0,"counts":[2,2,2,2,2,2,2,2,2,2]}
+{"name":"LotteryDetails Performance Test","type":"render","runs":10,"meanDuration":0,"stdevDuration":0,"durations":[0,0,0,0,0,0,0,0,0,0],"meanCount":4,"stdevCount":0,"counts":[4,4,4,4,4,4,4,4,4,4]}
