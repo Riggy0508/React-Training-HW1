@@ -1,3 +1,3 @@
 module.exports = {
-    extends: '@callstack/eslint-config/node',
+  extends: '@callstack/eslint-config/node',
 };

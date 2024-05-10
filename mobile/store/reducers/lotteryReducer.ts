@@ -5,7 +5,7 @@ import {
   GET_LOTTERIES_STARTED,
   GET_LOTTERIES_SUCCESS,
   GetLotteriesActions,
-} from '../actions/lotteryAction';
+} from '../actions/lotteryActions';
 import { Lottery } from '../../types';
 import * as LotteriesService from '../../services/lottery';
 

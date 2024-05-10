@@ -27,7 +27,7 @@ export const About = () => {
 
   return (
     <View style={styles.container}>
-      <Text>Created by the Callstack Team developed by Rigved</Text>
+      <Text>Created by the Callstack Team</Text>
       <TouchableOpacity
         accessibilityRole="button"
         onPress={onPress}

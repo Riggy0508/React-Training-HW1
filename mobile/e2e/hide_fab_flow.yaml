@@ -1,0 +1,16 @@
+appId: y
+---
+- launchApp
+- assertVisible: "Lotteries"
+- assertVisible: 
+    id: "add_lottery_FAB"
+- tapOn:
+    id: "side_menu_button"
+- tapOn: "Settings"
+- tapOn: 
+    id: "adding_new_lottery_switch"
+- tapOn:
+    id: "side_menu_button"
+- tapOn: "Lotteries"
+- assertNotVisible: 
+    id: "add_lottery_FAB"

@@ -5,16 +5,18 @@ import { colors } from '../colors';
 
 type Props = {
   onPress: () => void;
+  testID?: string;
 };
 
-const FAB = ({ onPress }: Props) => {
+const FAB = ({ onPress, testID='fab' }: Props) => {
   return (
     <TouchableOpacity
       accessibilityRole="button"
       style={styles.container}
       onPress={onPress}
+      testID="fab"
     >
-      <Ionicons name="add" size={30} color="#FFF" />
+      <Ionicons name="md-add" size={30} color="#FFF" />
     </TouchableOpacity>
   );
 };
