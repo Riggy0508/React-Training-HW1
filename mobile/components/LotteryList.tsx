@@ -1,12 +1,14 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef,RefObject } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   useWindowDimensions,
   Pressable,
-  Animated,
   TouchableOpacity,
+  ListRenderItemInfo,
+  Animated as RNAnimated,
+  Alert,
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -19,6 +21,112 @@ import {
 } from '../context/lotteries-sorting-context';
 import { LotteriesNavigatorNavigationProp } from '../navigation/types';
 import SearchInput from './SearchInput';
+
+import Animated, {useSharedValue, useAnimatedScrollHandler, useAnimatedStyle, interpolate, withTiming, Layout,SlideInRight,Extrapolate} from 'react-native-reanimated';
+import { Swipeable } from 'react-native-gesture-handler';
+import { SwipeableProps } from 'react-native-gesture-handler/lib/typescript/components/Swipeable';
+import { RectButton } from 'react-native-gesture-handler';
+
+interface ItemProps {
+  item: Lottery;
+  index: number;
+  onPress: (id: string) => void;
+  onDetailPress: (item: Lottery) => void;
+  leftActionLabel: string;
+  onLeftActionPressed: (item: Lottery, swipeable: RefObject<Swipeable>) => void;
+  selected?: boolean;
+  disabled?: boolean;
+  registered?: boolean;
+}
+
+const LotteryListItem = ({
+  item,
+  index,
+  onPress,
+  onDetailPress,
+  leftActionLabel,
+  onLeftActionPressed,
+  selected = false,
+  disabled = false,
+  registered = false,
+}: ItemProps) => {
+  const swipeable = useRef<Swipeable>(null);
+  const background = disabled ? colors.grey : colors.secondary;
+
+  const renderLeftActions: SwipeableProps['renderLeftActions'] = (
+    _progress,
+    dragX,
+  ) => {
+    const translation = dragX.interpolate({
+      inputRange: [0, 50, 100, 101],
+      outputRange: [-20, 0, 0, 1],
+    });
+    return (
+      <RectButton
+        style={styles.leftAction}
+        onPress={() => onLeftActionPressed(item, swipeable)}
+      >
+        <RNAnimated.Text
+          style={[
+            styles.actionLabel,
+            { transform: [{ translateX: translation }] },
+          ]}
+        >
+          {leftActionLabel}
+        </RNAnimated.Text>
+      </RectButton>
+    );
+  };
+
+  return (
+    <Animated.View entering={SlideInRight.delay(50 * index)}>
+      <Swipeable
+        ref={swipeable}
+        friction={2}
+        renderLeftActions={renderLeftActions}
+        leftThreshold={30}
+      >
+        <Pressable
+          accessibilityRole="button"
+          testID="lottery-item"
+          style={[
+            styles.container,
+            {
+              backgroundColor: registered ? colors.lightBlue : background,
+              borderColor: selected
+                ? colors.buttonSecondary
+                : colors.borderColor,
+            },
+          ]}
+          onPress={() => onPress(item.id)}
+          disabled={disabled || registered}
+          accessible={false}
+        >
+          <View style={styles.iconsContainer}>
+            {item.status === 'running' && (
+              <AntDesign name="sync" size={24} color="black" />
+            )}
+            {item.status == 'finished' && (
+              <MaterialIcons name="done" size={24} color="black" />
+            )}
+          </View>
+          <TouchableOpacity
+            accessibilityRole="button"
+            onPress={
+              () => onDetailPress(item)
+              // navigation.navigate('LotteryDetails', { id: item.id })
+            }
+            accessible={true}
+          >
+            <Text style={styles.name}>{item.name}</Text>
+          </TouchableOpacity>
+          <Text style={styles.prize}>{item.prize}</Text>
+          <Text style={styles.id}>{item.id}</Text>
+        </Pressable>
+      </Swipeable>
+    </Animated.View>
+  );
+};
 
 type Props = {
   lotteries: Lottery[];
@@ -38,29 +146,45 @@ const LotteryList = ({
 }: Props) => {
   const [filter, setFilter] = useState('');
   const { width } = useWindowDimensions();
-  const scrollY = useRef(new Animated.Value(0)).current;
+  const scrollY = useSharedValue(0);
+
+  const scrollHandler= useAnimatedScrollHandler((event)=>{
+    scrollY.value = withTiming(event.contentOffset.y,{duration:0});
+  })
 
   const navigation = useNavigation<LotteriesNavigatorNavigationProp<'Home'>>();
 
   const { selectedSorting } = useLotteriesSortingContext();
 
-  const headerHeight = scrollY.interpolate({
-    inputRange: [0, 200],
-    outputRange: [200, 60],
-    extrapolate: 'clamp',
-  });
+  const animatedHeaderStyle=useAnimatedStyle(()=>({
+    height:interpolate(scrollY.value,[0,200],[200,60],Extrapolate.CLAMP),
+    opacity:interpolate(scrollY.value,[0,100],[1,0],Extrapolate.CLAMP),
+    transform:[
+      {
+        scale:interpolate(
+          scrollY.value,[0,200],[1,0,5],Extrapolate.CLAMP,
+        ),
+      },
+    ],
+  }));
 
-  const opacity = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [1, 0],
-    extrapolate: 'clamp',
-  });
+  // const headerHeight = scrollY.interpolate({
+  //   inputRange: [0, 200],
+  //   outputRange: [200, 60],
+  //   extrapolate: 'clamp',
+  // });
 
-  const scale = scrollY.interpolate({
-    inputRange: [0, 200],
-    outputRange: [1, 0.5],
-    extrapolate: 'clamp',
-  });
+  // const opacity = scrollY.interpolate({
+  //   inputRange: [0, 100],
+  //   outputRange: [1, 0],
+  //   extrapolate: 'clamp',
+  // });
+
+  // const scale = scrollY.interpolate({
+  //   inputRange: [0, 200],
+  //   outputRange: [1, 0.5],
+  //   extrapolate: 'clamp',
+  // });
 
   const filteredLotteries = useMemo(
     () =>
@@ -74,46 +198,25 @@ const LotteryList = ({
     [filter, lotteries, selectedSorting],
   );
 
-  const renderItem = ({ item }: { item: Lottery }) => {
-    const isDisabled = item.status === 'finished';
-    const selected = selectedLotteries?.includes(item.id);
-    const background = isDisabled ? colors.grey : colors.secondary;
-    const registered = registeredLotteries?.includes(item.id);
-    return (
-      <Pressable
-        accessibilityRole="button"
-        testID='lottery-item'
-        style={[
-          styles.container,
-          {
-            backgroundColor: registered ? colors.lightBlue : background,
-            borderColor: selected ? colors.buttonSecondary : colors.borderColor,
-          },
-        ]}
-        onPress={() => onPress(item.id)}
-        disabled={isDisabled || registered}
-        accessible={false}
-      >
-        <View style={styles.iconsContainer}>
-          {item.status === 'running' && (
-            <AntDesign name="sync" size={24} color="black" />
-          )}
-          {item.status == 'finished' && (
-            <MaterialIcons name="done" size={24} color="black" />
-          )}
-        </View>
-        <TouchableOpacity
-          accessibilityRole="button"
-          onPress={() => navigation.navigate('LotteryDetails', { id: item.id })}
-          accessible={true}
-        >
-          <Text style={styles.name}>{item.name}</Text>
-        </TouchableOpacity>
-        <Text style={styles.prize}>{item.prize}</Text>
-        <Text style={styles.id}>{item.id}</Text>
-      </Pressable>
-    );
+  const toggleFavorite = (item: Lottery, swipeable: RefObject<Swipeable>) => {
+    Alert.alert(`Adding lottery ${item.name} is not implemented`);
+    swipeable.current?.close();
   };
+
+  const renderItem = ({ item, index }: ListRenderItemInfo<Lottery>) => (
+    <LotteryListItem
+      item={item}
+      index={index}
+      onPress={onPress}
+      onDetailPress={(item) =>
+        navigation.navigate('LotteryDetails', { id: item.id })
+      }
+      leftActionLabel="Favorite"
+      onLeftActionPressed={toggleFavorite}
+      selected={selectedLotteries?.includes(item.id)}
+      registered={registeredLotteries?.includes(item.id)}
+    />
+  );
 
   const SearchNoResult = () => (
     <View>
@@ -134,20 +237,7 @@ const LotteryList = ({
   );
 
   const Header = () => (
-    <Animated.View
-      style={[
-        styles.header,
-        {
-          height: headerHeight,
-          opacity,
-          transform: [
-            {
-              scale,
-            },
-          ],
-        },
-      ]}
-    >
+    <Animated.View style={[styles.header, animatedHeaderStyle]}>
       <View style={styles.title}>
         <Text style={styles.titleText}>Lotteries</Text>
         <MaterialIcons name="casino" size={36} color="black" />
@@ -165,15 +255,12 @@ const LotteryList = ({
         keyExtractor={(item) => item.id}
         style={{ width: width - 24 }}
         ListHeaderComponent={Header}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false },
-        )}
+        onScroll={scrollHandler}
+        itemLayoutAnimation={Layout.springify().damping(10)}
       />
     </>
   );
 };
-
 const styles = StyleSheet.create({
   header: {
     justifyContent: 'center',
@@ -199,6 +286,16 @@ const styles = StyleSheet.create({
   },
   id: {
     fontSize: 16,
+  },
+  leftAction: {
+    flex: 1,
+    backgroundColor: '#497AFC',
+    justifyContent: 'center',
+    marginBottom: 16,
+  },
+  actionLabel: {
+    color: 'white',
+    padding: 10,
   },
   wrapper: {
     flex: 1,

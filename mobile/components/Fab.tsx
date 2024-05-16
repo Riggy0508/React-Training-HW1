@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '../colors';
+import {useTheme} from '../hooks/useTheme'
 
 type Props = {
   onPress: () => void;
@@ -9,10 +10,13 @@ type Props = {
 };
 
 const FAB = ({ onPress, testID='fab' }: Props) => {
+  const {
+    theme: {colors},
+  }=useTheme();
   return (
     <TouchableOpacity
       accessibilityRole="button"
-      style={styles.container}
+      style={[styles.container , {backgroundColor:colors.background}]}
       onPress={onPress}
       testID="fab"
     >
