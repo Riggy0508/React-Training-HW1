@@ -13,8 +13,10 @@ import { RootState } from '../store/reducers';
 import { getLotteries } from '../store/reducers/lotteryReducer';
 import { LotteriesNavigatorNavigationProp } from '../navigation/types';
 
+const EMPTY_SELECTED_LOTTERIES: string[] = [];
+
 const Home = () => {
-  const [selectedLotteries, setSelectedLotteries] = useState<Array<string>>([]);
+  const [selectedLotteries, setSelectedLotteries] = useState<Array<string>>(EMPTY_SELECTED_LOTTERIES,);
   const navigation =
     useNavigation<LotteriesNavigatorNavigationProp<'AddLottery'>>();
   const isFocused = useIsFocused();
@@ -26,7 +28,7 @@ const Home = () => {
   useEffect(() => {
     if (isFocused) {
       dispatch(getLotteries());
-      setSelectedLotteries([]);
+      setSelectedLotteries(EMPTY_SELECTED_LOTTERIES);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
@@ -58,7 +60,12 @@ const Home = () => {
           registeredLotteries={registeredLotteries || []}
         />
         {lotteries.isAddingNewLotteriesEnabled ? (
-          <FAB onPress={() => navigation.navigate('AddLottery')} testID="add_lottery_Fab" />
+          <FAB
+          onPress={() => navigation.navigate('AddLottery')}
+          testID="add_lottery_FAB"
+          accessibilityLabel="Add lottery"
+          accessibilityHint="Pressing this button will add a new lottery"
+        />
         ) : null}
       </View>
     </LotteriesSortingContextProvider>

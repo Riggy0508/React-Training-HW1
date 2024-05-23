@@ -2,10 +2,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 
+const EMPTY_STORED_DATA: string[] = [];
+
 const STORAGE_KEY = '@selectedLotteries';
 
 const useAsyncStorage = () => {
-  const [storedData, setStoredData] = useState<string[]>();
+  const [storedData, setStoredData] = useState<string[]>(EMPTY_STORED_DATA);
   const storeData = async (newSelectedIds: string[]) => {
     try {
       const existedJson = await AsyncStorage.getItem(STORAGE_KEY);
@@ -21,7 +23,7 @@ const useAsyncStorage = () => {
   const getStoredData = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem(STORAGE_KEY);
-      const parsedJson = jsonValue !== null ? JSON.parse(jsonValue) : null;
+      const parsedJson = jsonValue !== null ? JSON.parse(jsonValue) : EMPTY_STORED_DATA;
       setStoredData(parsedJson);
     } catch (e) {
       console.error(e);
